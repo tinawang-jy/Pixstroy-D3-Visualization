@@ -63,7 +63,7 @@
           .attr("font-size", "20px")
           .text("Relationship between location mentioned and home country");
 
-        d3.json("language&location.json")
+        d3.json("language_location.json")
           .then(languageLocationData => {
             const parsedData = languageLocationData.map(d => ({
               ...d,
@@ -170,4 +170,3 @@
   </script>
 </body>
 </html>
-
