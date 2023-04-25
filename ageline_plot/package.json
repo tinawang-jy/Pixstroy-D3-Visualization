@@ -1,0 +1,14 @@
+{
+  "name": "e807a4a865c0d4db",
+  "main": "e807a4a865c0d4db@186.js",
+  "version": "186.0.0",
+  "homepage": "https://observablehq.com/d/e807a4a865c0d4db",
+  "author": {
+    "name": "PixtoryViz",
+    "url": "https://observablehq.com/@pixtoryviz"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4 - 5"
+  }
+}

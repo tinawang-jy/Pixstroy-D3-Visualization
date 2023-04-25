@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bubble Chart Example</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <div id="bubble-chart"></div>
+
+    <script>
+      // Read the data file
+      fetch('hazard_score&location.json')
+        .then(response => response.json())
+        .then(data => {
+          // Convert the data to bubble chart format
+          let bubbleData = data.map(d => ({
+            location: d.location,
+            hazard_score: d.hazard_score,
+            count: d.count
+          }));
+
+          // Create the bubble chart layout
+          let bubbleLayout = {
+            title: 'Relationship between Hazard Score and Country',
+            xaxis: {
+              title: 'Hazard Score'
+            },
+            yaxis: {
+              title: 'Count'
+            }
+          };
+
+          // Create the bubble chart
+          Plotly.newPlot('bubble-chart', [{
+            x: bubbleData.map(d => d.hazard_score),
+            y: bubbleData.map(d => d.count),
+            mode: 'markers',
+            marker: {
+              size: bubbleData.map(d => d.count),
+              color: bubbleData.map(d => d.hazard_score),
+              colorscale: 'YlOrRd',
+              sizemode: 'area',
+              sizeref: 0.05
+            },
+            text: bubbleData.map(d => d.location),
+            hovertemplate:
+              '<b>%{text}</b><br>' +
+              'Hazard Score: %{x:.3f}<br>' +
+              'Count: %{y}<br>' +
+              '<extra></extra>'
+          }], bubbleLayout);
+        });
+    </script>
+  </body>
+</html>

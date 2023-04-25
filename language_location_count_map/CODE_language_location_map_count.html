@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
+  <style>
+    .tooltip {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 5px;
+      border-radius: 5px;
+      pointer-events: none;
+      font-size: 12px;
+      border: 1px solid #ccc;
+    }
+    .country-label {
+      font-family: "Arial", sans-serif;
+      font-size: 10px;
+      fill: #333;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <div id="tooltip" class="tooltip" style="display: none;"></div>
+  <script>
+    const width = 960;
+    const height = 600;
+    const svg = d3.select("body")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    const tooltip = d3.select("#tooltip");
+
+    const projection = d3.geoNaturalEarth1()
+      .scale(width / (2 * Math.PI))
+      .translate([width / 2, height / 2]);
+
+    const path = d3.geoPath()
+      .projection(projection);
+
+    d3.json("https://gist.githubusercontent.com/mbostock/4090846/raw/world-110m.json")
+      .then(world => {
+        const countries = topojson.feature(world, world.objects.countries);
+
+        svg.selectAll("path")
+          .data(countries.features)
+          .join("path")
+          .attr("d", path)
+          .attr("fill", "#f8f8f8")
+          .attr("stroke", "#999");
+
+        svg.selectAll(".country-label")
+          .data(countries.features)
+          .join("text")
+          .attr("class", "country-label")
+          .attr("transform", d => `translate(${path.centroid(d)})`)
+          .attr("dy", "-0.5em")
+          .text(d => d.properties.name);
+
+        d3.json("language&location.json")
+          .then(languageLocationData => {
+            const parsedData = languageLocationData.map(d => ({
+              ...d,
+              coordinates: JSON.parse(d.coordinates)
+            }));
+
+            const radius = d3.scaleSqrt()
+              .domain([0, d3.max(parsedData, d => d.count)])
+              .range([2, 15]);
+
+            svg.selectAll("circle")
+              .data(parsedData)
+              .join("circle")
+              .attr("cx", d => projection(d.coordinates)[0])
+              .attr("cy", d => projection(d.coordinates)[1])
+              .attr("r", d => radius(d.count))
+              .attr("fill", d => d.Tika_Lang_ID === "en" ? "#1f77b4" : "#ff7f0e")
+              .attr("stroke", "#fff")
+              .attr("stroke-width", 1)
+              .on("mouseover", (event, d) => {
+                tooltip.style("display", "block")
+                  .html(`Language: ${d.Tika_Lang_ID}<br>Count: ${d.count}`);
+              })
+              .on("mousemove", (event) => {
+                tooltip.style("left", (event.pageX + 10) + "px")
+                  .style("top", (event.pageY - 25) + "px");
+              })
+              .on("mouseout", () => {
+                tooltip.style("display", "none");
+              });
+          });
+      });
+  </script>
+</body>
+</html>
