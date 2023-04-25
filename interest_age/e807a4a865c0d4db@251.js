@@ -1,17 +1,23 @@
 import define1 from "./e93997d5089d7165@2303.js";
+import define2 from "./a33468b95d0b15b0@808.js";
+import define3 from "./1f41fef8b019cf4e@94.js";
 
 function _1(md){return(
-md`# Topic Age Range by Country`
+md`# Post Interest Age Range by Country`
+)}
+
+function _legend(swatches,color,margin){return(
+swatches({color, columns: "130px 4", marginLeft: margin.left})
 )}
 
 function _chart(dataByCountry,d3,color,DOM,width,height,margin,createTooltip,y,getRect,getTooltipContent,axisTop,axisBottom)
 {
 
   let filteredData;
+
     filteredData = [].concat.apply([], dataByCountry.map(d=>d.values));
-
-  filteredData.forEach(d=> d.color = d3.color(color(d.Country)))
-
+    filteredData.forEach(d=> d.color = d3.color(color(d.Country)))
+  
   let parent = this; 
   if (!parent) {
     parent = document.createElement("div");
@@ -78,7 +84,7 @@ function _chart(dataByCountry,d3,color,DOM,width,height,margin,createTooltip,y,g
 
     civs.data(filteredData, d=>d.Interest)
       .transition()
-      // .delay((d,i)=>i*10)
+      //.delay((d,i)=>i*10)
       .ease(d3.easeCubic)
       .attr("transform", (d,i)=>`translate(0 ${y(i)})`)
 
@@ -215,7 +221,7 @@ function _color(d3,countries){return(
 d3.scaleOrdinal(d3.schemeSet2).domain(countries)
 )}
 
-function _22(html){return(
+function _25(html){return(
 html`CSS<style> svg{font: 11px sans-serif;}</style>`
 )}
 
@@ -227,6 +233,7 @@ export default function define(runtime, observer) {
   ]);
   main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
   main.variable(observer()).define(["md"], _1);
+  main.variable(observer("legend")).define("legend", ["swatches","color","margin"], _legend);
   main.variable(observer("chart")).define("chart", ["dataByCountry","d3","color","DOM","width","height","margin","createTooltip","y","getRect","getTooltipContent","axisTop","axisBottom"], _chart);
   main.variable(observer("getTooltipContent")).define("getTooltipContent", _getTooltipContent);
   main.variable(observer("height")).define("height", _height);
@@ -249,6 +256,10 @@ export default function define(runtime, observer) {
   const child1 = runtime.module(define1);
   main.import("checkbox", child1);
   main.import("select", child1);
-  main.variable(observer()).define(["html"], _22);
+  const child2 = runtime.module(define2);
+  main.import("swatches", child2);
+  const child3 = runtime.module(define3);
+  main.import("Inspector", child3);
+  main.variable(observer()).define(["html"], _25);
   return main;
 }
